@@ -1,0 +1,11 @@
+.env
+/pytest_cache/
+__pycache__/
+.pytest_cache/
+results/
+node_modules/
+downloads/
+reports/
+videos/
+screenshots/
+*.html

@@ -1,0 +1,63 @@
+name: Run Cypress UI Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'ui-tests/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'ui-tests/**'
+  workflow_dispatch:
+
+env: 
+  UI_BASE_URL: ${{ vars.UI_BASE_URL }}
+  UI_USERNAME: ${{ vars.UI_USERNAME }}
+  UI_PASSWORD: ${{ vars.UI_PASSWORD }}
+
+jobs:
+  ui-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.18.0
+
+    - name: Set permissions for ui-tests folder
+      run: |
+        echo "Setting permissions for ui-tests directory..."
+        chmod -R 777 $GITHUB_WORKSPACE/ui-tests
+
+    - name: Build Docker Image
+      run: |
+        echo "Building Docker image..."
+        docker build -f ui-tests/Dockerfile -t ui-tests ./ui-tests
+  
+    - name: Run tests in Docker
+      run: |
+        echo "Running tests..."
+        docker run --rm \
+            -v $GITHUB_WORKSPACE/ui-tests:/ui-tests \
+            -e UI_BASE_URL=$UI_BASE_URL \
+            -e UI_USERNAME=$UI_USERNAME \
+            -e UI_PASSWORD=$UI_PASSWORD \
+            ui-tests npm test:run
+
+    - name: Upload JSON report as artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cypress-test-result.json
+        path: ui-tests/cypress/results/*.json
+
+    - name: Upload screenshots as artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: screenshots
+        path: ui-tests/cypress/screenshots

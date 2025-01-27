@@ -1,0 +1,46 @@
+name: Run API Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'api-tests/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'api-tests/**' 
+  workflow_dispatch:
+  
+env: 
+  ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
+  BASE_URL: ${{ vars.BASE_URL }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set permissions for api-tests folder
+        run: |
+          echo "Setting permissions for api-tests directory..."
+          chmod -R 777 $GITHUB_WORKSPACE/api-tests
+
+      - name: Build Docker image
+        run: |
+          docker build -f api-tests/Dockerfile -t api-tests .
+
+      - name: Run tests in Docker
+        run: |
+          docker run --rm \
+            -v $GITHUB_WORKSPACE/api-tests:/api-tests \
+            -e ACCESS_TOKEN=$ACCESS_TOKEN \
+            -e BASE_URL=$BASE_URL \
+            api-tests pytest ./tests --html=results/report.html --self-contained-html
+
+      - name: Upload HTML report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-report
+          path: api-tests/results/report.html

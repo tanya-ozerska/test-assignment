@@ -1,0 +1,45 @@
+name: Run k6 Performance Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'performance-tests/**'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'performance-tests/**' 
+  workflow_dispatch:
+
+env: 
+  ACCESS_TOKEN: ${{ vars.ACCESS_TOKEN }}
+  BASE_URL: ${{ vars.BASE_URL }}
+
+jobs:
+  k6-test:
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set permissions for performance-tests folder
+        run: |
+          echo "Setting permissions for performance-tests directory..."
+          chmod -R 777 $GITHUB_WORKSPACE/performance-tests
+
+      - name: Run k6 Load Test in Docker
+        run: |
+          docker run --rm -i \
+            -v $GITHUB_WORKSPACE/performance-tests:/performance-tests \
+            -e K6_WEB_DASHBOARD=true \
+            -e K6_WEB_DASHBOARD_OPEN=false \
+            -e K6_WEB_DASHBOARD_EXPORT=/performance-tests/html-report.html \
+            -e ACCESS_TOKEN=$ACCESS_TOKEN \
+            -e K6_WEB_DASHBOARD_PORT=-1 \
+            grafana/k6 run --out web-dashboard=/performance-tests/html-report.html /performance-tests/top-rated.js
+
+      - name: Upload k6 Report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-report
+          path: performance-tests/html-report.html
