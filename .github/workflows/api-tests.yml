@@ -5,10 +5,12 @@ on:
     branches: [main, master]
     paths:
       - 'api-tests/**'
+      - '.github/workflows/api-tests.yml'
   pull_request:
     branches: [main, master]
     paths:
       - 'api-tests/**' 
+      - '.github/workflows/api-tests.yml'
   workflow_dispatch:
   
 env: 

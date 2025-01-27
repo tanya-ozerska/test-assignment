@@ -112,8 +112,12 @@ This project includes the description of test cases in Gherkin (available in `ui
 
 ## To run Cypress UI tests in Pipeline
 
-Note: Currently, Cypress UI tests fail in the pipeline due to issues with missing faker and/or mocha (reporter) modules. The issue might be due to misconfigurations in the Dockerfile or ui-tests.yml. A solution has not been found yet. Please, note that this issue with faker/mocha does not occur when tests are run locally in Docker, not in GitHub.
+1. Test run is automatically triggered on push or merge to `main` if changes were made to files in `ui-tests` folder.
+2. Test run can be triggered manually in GitHub Actions: navigate to Actions -> click on `Run Cypress UI Tests` workflow -> click `Run workflow` on the right side of the page.
 
 ## Report
 
-* After running Cypress UI Tests locally, the test report will be saved to `ui-tests/cypress/reports` folder.
+* After running Cypress UI tests locally, the default test report JSON file will be saved in `ui-tests/cypress/results` folder. In case of a failed test, a screenshot will be taken and saved in `ui-tests/cypress/screenshots` folder.
+* After running Cypress UI tests in the pipeline, the default test report JSON file will be attached to the workflow run as an artifact. The same applies to the screenshots.
+
+NOTE: During the implementation, Mocha reporter and Faker were used for Cypress tests, but a misconfiguration issue occurred when running the project with these modules in Docker (although it works if these dependencies are installed on local devices). Due to the inability to find a solution for this Docker problem, Mocha reporter and Faker were removed from the project.
