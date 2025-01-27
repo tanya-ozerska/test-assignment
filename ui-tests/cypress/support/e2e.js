@@ -1,7 +1,7 @@
 import './commands';
 import LoginPage from '../pages/loginPage';
 
-before(() => {
+beforeEach(() => {
     cy.session('accept-cookies-session', () => {
         const loginPage = new LoginPage();
         loginPage.goTo();

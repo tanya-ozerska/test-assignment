@@ -52,10 +52,10 @@ describe('Logout functionality', () => {
 
   it('should log out successfully', () => {
     const userName = dashBoardPage.formatEmailToUserName();
-    dashBoardPage.buttonAdmin.should('be.visible', {timeout: 500});
+    dashBoardPage.buttonAdmin.should('be.visible', {timeout: 1000});
     dashBoardPage.buttonAdmin.should('have.attr', 'title', `${userName}`);
     dashBoardPage.buttonAdmin.click();
-    dashBoardPage.buttonLogout.should('be.visible');
+    dashBoardPage.buttonLogout.should('be.visible', {timeout: 500});
     dashBoardPage.buttonLogout.click();
     cy.url().should('include', '/login');
     loginPage.checkMessage('You have successfully logged out.');

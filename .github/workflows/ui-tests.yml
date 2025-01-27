@@ -48,14 +48,7 @@ jobs:
             -e UI_BASE_URL=$UI_BASE_URL \
             -e UI_USERNAME=$UI_USERNAME \
             -e UI_PASSWORD=$UI_PASSWORD \
-            ui-tests npm test:run
-
-    - name: Upload JSON report as artifact
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: cypress-test-result.json
-        path: ui-tests/cypress/results
+            ui-tests npm test:run --reporter json --reporter-options outputFile=cypress/results/output.json
 
     - name: Upload screenshots as artifact
       if: always()

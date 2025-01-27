@@ -117,7 +117,7 @@ This project includes the description of test cases in Gherkin (available in `ui
 
 ## Report
 
-* After running Cypress UI tests locally, the default test report JSON file will be saved in `ui-tests/cypress/results` folder. In case of a failed test, a screenshot will be taken and saved in `ui-tests/cypress/screenshots` folder.
-* After running Cypress UI tests in the pipeline, the default test report JSON file will be attached to the workflow run as an artifact. The same applies to the screenshots.
+* After running Cypress UI tests locally, the test results will be displayed in the console in JSON format. In the case of a failed test, a screenshot will be taken and saved in the `ui-tests/cypress/screenshots` folder.
+* After running Cypress UI tests in the pipeline, the test results can be found in the logs in JSON format. Screenshots will be attached to the workflow run as artifacts.
 
 NOTE: During the implementation, Mocha reporter and Faker were used for Cypress tests, but a misconfiguration issue occurred when running the project with these modules in Docker (although it works if these dependencies are installed on local devices). Due to the inability to find a solution for this Docker problem, Mocha reporter and Faker were removed from the project.
